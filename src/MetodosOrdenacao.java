@@ -26,7 +26,13 @@ public class MetodosOrdenacao {
             case 3:
                 selecaoDireta(arquivoOrdenado);
                 selecaoDireta(arquivoAleatorio);
-                selecaoDireta(arquivoAleatorio);
+                selecaoDireta(arquivoReverso);
+                break;
+            case 4:
+                bolha(arquivoOrdenado);
+                bolha(arquivoAleatorio);
+                bolha(arquivoReverso);
+                break;
         }
 
 
@@ -199,5 +205,39 @@ public class MetodosOrdenacao {
 
 
         }
+        arq.setMovimentacao(movimentacao);
+        arq.setComparacao(comparacao);
+    }
+
+    public void bolha(Arquivo arq) throws IOException {
+
+        int tl = arq.filesize();
+        Registro atual = new Registro();
+        Registro prox = new Registro();
+
+        int comparacao = 0;
+        int movimentacao = 0;
+
+        for(int i=tl;i>0;i++)
+            for(int j=0;j<tl-1;j++){
+                arq.seekArq(j);
+                atual.leDoArq(arq.getArquivo());
+
+                arq.seekArq(j+1);
+                prox.leDoArq(arq.getArquivo());
+
+                if(atual.getCodigo()>prox.getCodigo()){
+                    movimentacao+=2;
+                    arq.seekArq(j);
+                    prox.gravaNoArq(arq.getArquivo());
+
+                    arq.seekArq(j+1);
+                    atual.gravaNoArq(arq.getArquivo());
+                }
+
+            }
+
+        arq.setMovimentacao(movimentacao);
+        arq.setComparacao(comparacao);
     }
 }

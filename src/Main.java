@@ -28,9 +28,16 @@ public void menu() throws IOException {
             System.out.println("|1| Insercao Direta");
             System.out.println("|2| Insercao Binaria");
             System.out.println("|3| Selecao Direta");
-            System.out.println("|4| ...");
-            System.out.println("|5| ...");
-            System.out.println("|6| ...");
+            System.out.println("|4| Bolha");
+            System.out.println("|5| Shake");
+            System.out.println("|6| Heap Sort");
+            System.out.println("|7| Shell Sort");
+            System.out.println("|6| Heap Sort");
+            System.out.println("|6| Heap Sort");
+            System.out.println("|6| Heap Sort");
+            System.out.println("|6| Heap Sort");
+            System.out.println("|6| Heap Sort");
+
             opcao = input.nextInt();
             chamaOrdenacao(opcao);
         }
