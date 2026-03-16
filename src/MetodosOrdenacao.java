@@ -33,6 +33,13 @@ public class MetodosOrdenacao {
                 bolha(arquivoAleatorio);
                 bolha(arquivoReverso);
                 break;
+            case 5:
+                shake(arquivoOrdenado);
+                shake(arquivoAleatorio);
+                shake(arquivoReverso);
+                break;
+            case 6:
+                break;
         }
 
 
@@ -294,6 +301,8 @@ public class MetodosOrdenacao {
                 inicio++;
             }
         }
+        arq.setComparacao(comparacao);
+        arq.setMovimentacao(movimentacao);
 
     }
 }
