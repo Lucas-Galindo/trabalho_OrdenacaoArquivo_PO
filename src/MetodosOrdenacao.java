@@ -22,6 +22,11 @@ public class MetodosOrdenacao {
                 insercaoBinaria(arquivoOrdenado);
                 insercaoBinaria(arquivoAleatorio);
                 insercaoBinaria(arquivoReverso);
+                break;
+            case 3:
+                selecaoDireta(arquivoOrdenado);
+                selecaoDireta(arquivoAleatorio);
+                selecaoDireta(arquivoAleatorio);
         }
 
 
@@ -137,5 +142,62 @@ public class MetodosOrdenacao {
         }
         arq.setMovimentacao(movimentacao);
         arq.setComparacao(comparacao);
+    }
+
+    public int buscaExaustiva(Arquivo arq, int chave) throws IOException {
+        int i=0;
+        arq.seekArq(i);
+        Registro reg = new Registro();
+        reg.leDoArq(arq.getArquivo());
+        while(i<arq.filesize() && reg.getCodigo()!=chave)
+        {
+            arq.seekArq(i);
+            reg.leDoArq(arq.getArquivo());
+            i++;
+        }
+
+        if(reg.getCodigo()==chave)
+            return i;
+        return -1;
+    }
+    public void selecaoDireta(Arquivo arq) throws IOException {
+        int tl = arq.filesize();
+        int posMenor;
+
+        Registro regMenor = new Registro();
+        Registro leitor = new Registro();
+        Registro leitorAux = new Registro();
+        int comparacao = 0;
+        int movimentacao = 0;
+
+        for(int i=0;i<tl-1;i++){
+            arq.seekArq(i);
+            leitor.leDoArq(arq.getArquivo());
+            regMenor = leitor;
+            posMenor = i;
+
+            for(int j=i+1;j<tl;j++){
+
+                arq.seekArq(j);
+                leitorAux.leDoArq(arq.getArquivo());
+                if(leitorAux.getCodigo() < regMenor.getCodigo()){
+                    regMenor = leitorAux;
+                    posMenor = j;
+                }
+                comparacao++;
+
+            }
+
+            arq.seekArq(posMenor);
+            regMenor.leDoArq(arq.getArquivo());
+
+            arq.seekArq(i);
+            regMenor.gravaNoArq(arq.getArquivo());
+
+            arq.seekArq(posMenor);
+            leitor.gravaNoArq(arq.getArquivo());
+
+
+        }
     }
 }

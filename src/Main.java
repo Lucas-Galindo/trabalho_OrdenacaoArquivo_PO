@@ -14,14 +14,17 @@ public void menu() throws IOException {
     while(opcaoRunning!=0)
     {
         System.out.println("PAINEL - ORDENACAO EM ARQUIVO");
-        System.out.println("|1| Executar");
-        System.out.println("|2| Gerar Tabela");
-        System.out.println("|3| Testar Ordenacoes");
+        System.out.println("|1| Executar e gerar tabela");
+        //System.out.println("|2| Gerar Tabela");
+        System.out.println("|2| Testar Ordenacoes");
         System.out.println("|0| Sair");
         Scanner input = new Scanner(System.in);
         opcao = input.nextInt();
         opcaoRunning = opcao;
-        if(opcao == 3){
+        if(opcao == 1)
+        {
+            //Fazer um ciclo while que chama todas as ordenacoes
+        }else if(opcao == 2){
             System.out.println("|1| Insercao Direta");
             System.out.println("|2| Insercao Binaria");
             System.out.println("|3| Selecao Direta");
