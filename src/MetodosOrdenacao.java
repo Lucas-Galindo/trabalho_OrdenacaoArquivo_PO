@@ -305,4 +305,59 @@ public class MetodosOrdenacao {
         arq.setMovimentacao(movimentacao);
 
     }
+    public void heapSort(Arquivo arq) throws IOException {
+        int tl = arq.filesize();
+        int posPai;
+        Registro F1 = new Registro();
+        Registro F2 = new Registro();
+        Registro maior = new Registro();
+        Registro pai = new Registro();
+        Registro inicio = new Registro(), fim = new Registro();
+
+        int posF1, posF2, posMaior;
+
+        while(tl>1){
+            for(posPai = tl/2-1;posPai>=0;posPai--){
+                posF1 = 2*posPai+1;
+                posF2 = posF1+1;
+                posMaior = posF1;
+
+                arq.seekArq(posF1);
+                F1.leDoArq(arq.getArquivo());
+
+                arq.seekArq(posF2);
+                F2.leDoArq(arq.getArquivo());
+                if(posF2 < tl && F1.getCodigo()<F2.getCodigo()){
+                    posMaior = posF2;
+                    maior= F2;
+                }
+                arq.seekArq(posMaior);
+                maior.leDoArq(arq.getArquivo());
+
+                arq.seekArq(posPai);
+                pai.leDoArq(arq.getArquivo());
+                if(pai.getCodigo()<maior.getCodigo()){
+                    arq.seekArq(posMaior);
+                    pai.gravaNoArq(arq.getArquivo());
+
+                    arq.seekArq(posPai);
+                    maior.gravaNoArq(arq.getArquivo());
+                }
+            }
+
+            tl--;
+            arq.seekArq(0);
+            inicio.leDoArq(arq.getArquivo());
+
+            arq.seekArq(tl);
+            fim.leDoArq(arq.getArquivo());
+
+            arq.seekArq(0);
+            fim.gravaNoArq(arq.getArquivo());
+
+            arq.seekArq(tl);
+            inicio.gravaNoArq(arq.getArquivo());
+
+        }
+    }
 }
