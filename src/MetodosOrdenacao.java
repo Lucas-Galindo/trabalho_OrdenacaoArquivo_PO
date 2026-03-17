@@ -316,6 +316,9 @@ public class MetodosOrdenacao {
 
         int posF1, posF2, posMaior;
 
+        int comparacao = 0;
+        int movimentacao = 0;
+
         while(tl>1){
             for(posPai = tl/2-1;posPai>=0;posPai--){
                 posF1 = 2*posPai+1;
@@ -327,21 +330,28 @@ public class MetodosOrdenacao {
 
                 arq.seekArq(posF2);
                 F2.leDoArq(arq.getArquivo());
+
+                comparacao++;
                 if(posF2 < tl && F1.getCodigo()<F2.getCodigo()){
                     posMaior = posF2;
                     maior= F2;
+                    movimentacao++;
                 }
                 arq.seekArq(posMaior);
                 maior.leDoArq(arq.getArquivo());
 
                 arq.seekArq(posPai);
                 pai.leDoArq(arq.getArquivo());
+
+                comparacao++;
                 if(pai.getCodigo()<maior.getCodigo()){
                     arq.seekArq(posMaior);
                     pai.gravaNoArq(arq.getArquivo());
 
                     arq.seekArq(posPai);
                     maior.gravaNoArq(arq.getArquivo());
+
+                    movimentacao++;
                 }
             }
 
@@ -358,6 +368,21 @@ public class MetodosOrdenacao {
             arq.seekArq(tl);
             inicio.gravaNoArq(arq.getArquivo());
 
+        }
+        arq.setMovimentacao(movimentacao);
+        arq.setComparacao(comparacao);
+    }
+
+    public void shellSort(Arquivo arq) throws IOException {
+        int dist = 1;
+        int tl = arq.filesize();
+        while(dist<tl)
+            dist = dist*3+1;
+        dist = dist/3;
+        while(dist>0){
+            for(){
+                
+            }
         }
     }
 }
