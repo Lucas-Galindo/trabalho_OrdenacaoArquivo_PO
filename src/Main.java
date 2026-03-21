@@ -1,11 +1,10 @@
 
 public void chamaOrdenacao(int op) throws IOException {
-    MetodosOrdenacao metodos = new MetodosOrdenacao();
-
+    Arquivo aux = new Arquivo();
     Arquivo arquivoOrdenado = new Arquivo("Ordenado.dat");
     Arquivo arquivoAleatorio = new Arquivo("Aleatorio.dat");
     Arquivo arquivoReverso = new Arquivo("Reverso.dat");
-    metodos.carregaOrdenacao(op,arquivoOrdenado,arquivoAleatorio,arquivoReverso);
+    aux.carregaOrdenacao(op,arquivoOrdenado,arquivoAleatorio,arquivoReverso);
 
 }
 public void menu() throws IOException {
