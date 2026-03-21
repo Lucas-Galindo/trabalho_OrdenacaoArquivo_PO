@@ -4,11 +4,8 @@ import java.io.RandomAccessFile;
 public class Arquivo {
     private String nomearquivo;
     private RandomAccessFile arquivo;
-    private int comparacao, movimentacao;
+    private long comparacao, movimentacao;
 
-    public Arquivo(){
-
-    }
     public RandomAccessFile getArquivo() {
         return arquivo;
     }
@@ -17,19 +14,19 @@ public class Arquivo {
         this.arquivo = arquivo;
     }
 
-    public int getComparacao() {
+    public long getComparacao() {
         return comparacao;
     }
 
-    public void setComparacao(int comparacao) {
+    public void setComparacao(long comparacao) {
         this.comparacao = comparacao;
     }
 
-    public int getMovimentacao() {
+    public long getMovimentacao() {
         return movimentacao;
     }
 
-    public void setMovimentacao(int movimentacao) {
+    public void setMovimentacao(long movimentacao) {
         this.movimentacao = movimentacao;
     }
 
@@ -41,19 +38,24 @@ public class Arquivo {
         this.nomearquivo = nomearquivo;
     }
 
+    public Arquivo() {
+        this.comparacao = this.movimentacao = 0;
+    }
+
     public Arquivo(String nomearquivo) {
         try {
+            java.io.File pasta = new java.io.File("Dados");
+            if (!pasta.exists()) pasta.mkdirs();
+            this.nomearquivo = nomearquivo;
             arquivo = new RandomAccessFile("Dados/" + nomearquivo, "rw");
             this.comparacao = this.movimentacao = 0;
-        } catch (IOException e) { }
+        } catch (IOException e) {
+            System.err.println("Erro ao abrir arquivo '" + nomearquivo + "': " + e.getMessage());
+        }
     }
 
     public void executa() {
-        try {
-            leArq();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        leArq();
         exibirArq();
     }
 
@@ -72,20 +74,23 @@ public class Arquivo {
         return retorno;
     }
 
-    public int filesize() throws IOException {
-        return (int) (arquivo.length() / Registro.length());
+    public int filesize() {
+        try {
+            return (int) (arquivo.length() / Registro.length());
+        } catch (IOException e) {
+            return 0;
+        }
     }
 
-    public void inserirRegNoFinal(Registro reg) throws IOException {
+    public void inserirRegNoFinal(Registro reg) {
         seekArq(filesize());
         reg.gravaNoArq(arquivo);
     }
 
     public void exibirArq() {
-        int i;
+        int i = 0;
         Registro aux = new Registro();
         seekArq(0);
-        i = 0;
         while (!this.eof()) {
             System.out.println("Posicao " + i);
             aux.leDoArq(arquivo);
@@ -102,13 +107,13 @@ public class Arquivo {
         aux.exibirReg();
     }
 
-    public void seekArq(int pos) {
+    public void seekArq(long pos) {
         try {
             arquivo.seek(pos * Registro.length());
         } catch (IOException e) { }
     }
 
-    public void leArq() throws IOException {
+    public void leArq() {
         int codigo, idade;
         String nome;
         codigo = Entrada.leInteger("Digite o codigo");
@@ -128,14 +133,14 @@ public class Arquivo {
         this.movimentacao = 0;
     }
 
-    public void copiaArquivo(Arquivo auxRev) {
+    public void copiaArquivo(Arquivo destino) {
         Registro aux = new Registro();
-        auxRev.seekArq(0);
-        auxRev.truncate(0);
         seekArq(0);
+        destino.truncate(0);
+        destino.seekArq(0);
         while (!eof()) {
             aux.leDoArq(arquivo);
-            aux.gravaNoArq(auxRev.arquivo);
+            aux.gravaNoArq(destino.arquivo);
         }
     }
 
@@ -170,39 +175,35 @@ public class Arquivo {
     }
 
     // -------------------------------------------------------------------------
-    // Métodos de ordenação (migrados de MetodosOrdenacao)
+    // Métodos de ordenação
     // -------------------------------------------------------------------------
 
-    public void insercaoDireta() throws IOException {
+    public void insercaoDireta() {
         int tl = filesize();
-        int i = 1, posAtual;
+        int i = 1, pos;
         Registro regAtual = new Registro(), regAnterior = new Registro();
-
-        int comparacao = 0;
-        int movimentacao = 0;
+        long comparacao = 0, movimentacao = 0;
 
         while (i < tl) {
             seekArq(i);
             regAtual.leDoArq(arquivo);
-            posAtual = i;
-            if (posAtual - 1 >= 0) {
-                seekArq(i - 1);
-                regAnterior.leDoArq(arquivo);
-            }
+            pos = i;
+            seekArq(pos - 1);
+            regAnterior.leDoArq(arquivo);
             comparacao++;
-            while (posAtual - 1 >= 0 && regAnterior.getCodigo() > regAtual.getCodigo()) {
+            while (pos > 0 && regAnterior.getCodigo() > regAtual.getCodigo()) {
                 movimentacao++;
-                seekArq(posAtual);
+                seekArq(pos);
                 regAnterior.gravaNoArq(arquivo);
-                posAtual--;
-                if (posAtual - 1 >= 0) {
-                    seekArq(posAtual - 1);
+                pos--;
+                if (pos > 0) {
+                    seekArq(pos - 1);
                     regAnterior.leDoArq(arquivo);
                 }
                 comparacao++;
             }
             movimentacao++;
-            seekArq(posAtual);
+            seekArq(pos);
             regAtual.gravaNoArq(arquivo);
             i++;
         }
@@ -210,61 +211,56 @@ public class Arquivo {
         this.movimentacao = movimentacao;
     }
 
-    public int[] buscaBinaria(int chave, int tl) {
-        int posIni = 0, posFim = tl - 1, posMeio = tl / 2;
-        Registro registro = new Registro();
-        int comp = 0;
-        while (chave != registro.getCodigo() && posIni < posFim) {
-            comp++;
-            seekArq(posMeio);
-            registro.leDoArq(arquivo);
-            if (chave < registro.getCodigo())
-                posFim = posMeio - 1;
-            else
-                posIni = posMeio + 1;
-            comp++;
-            posMeio = (posIni + posFim) / 2;
-        }
-        seekArq(posMeio);
-        registro.leDoArq(arquivo);
-        if (chave > registro.getCodigo())
-            posMeio += 1;
-        comp++;
-        return new int[]{posMeio, comp};
-    }
-
-    public void insercaoBinaria() throws IOException {
-        int tl = filesize();
-        int pos;
-        int[] retornoVetor = {};
-
-        Registro regAux = new Registro(), leitor = new Registro();
-        int movimentacao = 0, comparacao = 0;
-        for (int i = 1; i < tl; i++) {
-            seekArq(i);
-            regAux.leDoArq(arquivo);
-            retornoVetor = buscaBinaria(leitor.getCodigo(), i);
-            pos = retornoVetor[0];
-            comparacao += retornoVetor[1];
-            for (int j = i; j > pos; j--) {
-                movimentacao++;
-                seekArq(j - 1);
-                leitor.leDoArq(arquivo);
-                seekArq(j);
-                leitor.gravaNoArq(arquivo);
-            }
-            movimentacao++;
-            seekArq(pos);
-            leitor.gravaNoArq(arquivo);
-        }
-        this.movimentacao = movimentacao;
-        this.comparacao = comparacao;
-    }
-
-    public int buscaExaustiva(int chave) throws IOException {
-        int i = 0;
-        seekArq(i);
+    public int buscaBinaria(int chave, int ini, int fim) {
         Registro reg = new Registro();
+        int meio = (ini + fim) / 2;
+        seekArq(meio);
+        reg.leDoArq(arquivo);
+        comparacao++;
+        while (ini <= fim && chave != reg.getCodigo()) {
+            if (chave > reg.getCodigo())
+                ini = meio + 1;
+            else
+                fim = meio - 1;
+            meio = (ini + fim) / 2;
+            seekArq(meio);
+            reg.leDoArq(arquivo);
+            comparacao++;
+        }
+        if (chave > reg.getCodigo())
+            return meio + 1;
+        return meio;
+    }
+
+    public void insercaoBinaria() {
+        int tl = filesize();
+        Registro regAtual = new Registro(), regAux = new Registro();
+        this.comparacao = 0;
+        this.movimentacao = 0;
+
+        for (int i = 1; i < tl; i++) {
+            int j = i - 1;
+            seekArq(i);
+            regAtual.leDoArq(arquivo);
+            int pos = buscaBinaria(regAtual.getCodigo(), 0, j);
+            while (j >= pos) {
+                this.movimentacao++;
+                seekArq(j);
+                regAux.leDoArq(arquivo);
+                seekArq(j + 1);
+                regAux.gravaNoArq(arquivo);
+                j--;
+            }
+            this.movimentacao++;
+            seekArq(j + 1);
+            regAtual.gravaNoArq(arquivo);
+        }
+    }
+
+    public int buscaExaustiva(int chave) {
+        int i = 0;
+        Registro reg = new Registro();
+        seekArq(i);
         reg.leDoArq(arquivo);
         while (i < filesize() && reg.getCodigo() != chave) {
             seekArq(i);
@@ -276,15 +272,11 @@ public class Arquivo {
         return -1;
     }
 
-    public void selecaoDireta() throws IOException {
+    public void selecaoDireta() {
         int tl = filesize();
         int posMenor;
-
-        Registro regMenor = new Registro();
-        Registro leitor = new Registro();
-        Registro leitorAux = new Registro();
-        int comparacao = 0;
-        int movimentacao = 0;
+        Registro regMenor = new Registro(), leitor = new Registro(), leitorAux = new Registro();
+        long comparacao = 0, movimentacao = 0;
 
         for (int i = 0; i < tl - 1; i++) {
             seekArq(i);
@@ -294,57 +286,60 @@ public class Arquivo {
             for (int j = i + 1; j < tl; j++) {
                 seekArq(j);
                 leitorAux.leDoArq(arquivo);
+                comparacao++;
                 if (leitorAux.getCodigo() < regMenor.getCodigo()) {
                     regMenor = leitorAux;
                     posMenor = j;
                 }
-                comparacao++;
             }
-            seekArq(posMenor);
-            regMenor.leDoArq(arquivo);
-            seekArq(i);
-            regMenor.gravaNoArq(arquivo);
-            seekArq(posMenor);
-            leitor.gravaNoArq(arquivo);
+            if (posMenor != i) {
+                movimentacao += 2;
+                seekArq(posMenor);
+                regMenor.leDoArq(arquivo);
+                seekArq(i);
+                regMenor.gravaNoArq(arquivo);
+                seekArq(posMenor);
+                leitor.gravaNoArq(arquivo);
+            }
         }
         this.movimentacao = movimentacao;
         this.comparacao = comparacao;
     }
 
-    public void bolha() throws IOException {
+    public void bolha() {
         int tl = filesize();
-        Registro atual = new Registro();
-        Registro prox = new Registro();
+        Registro atual = new Registro(), prox = new Registro();
+        boolean flag = true;
+        long comparacao = 0, movimentacao = 0;
 
-        int comparacao = 0;
-        int movimentacao = 0;
-
-        for (int i = tl; i > 0; i--)
+        while (tl > 1 && flag) {
+            flag = false;
             for (int j = 0; j < tl - 1; j++) {
                 seekArq(j);
                 atual.leDoArq(arquivo);
                 seekArq(j + 1);
                 prox.leDoArq(arquivo);
+                comparacao++;
                 if (atual.getCodigo() > prox.getCodigo()) {
                     movimentacao += 2;
                     seekArq(j);
                     prox.gravaNoArq(arquivo);
                     seekArq(j + 1);
                     atual.gravaNoArq(arquivo);
+                    flag = true;
                 }
             }
+            tl--;
+        }
         this.movimentacao = movimentacao;
         this.comparacao = comparacao;
     }
 
-    public void shake() throws IOException {
+    public void shake() {
         int inicio = 0, fim = filesize() - 1;
-        Registro atual = new Registro();
-        Registro prox = new Registro();
+        Registro atual = new Registro(), prox = new Registro();
         boolean flag = true;
-
-        int movimentacao = 0;
-        int comparacao = 0;
+        long movimentacao = 0, comparacao = 0;
 
         while (inicio < fim) {
             flag = false;
@@ -389,18 +384,13 @@ public class Arquivo {
         this.movimentacao = movimentacao;
     }
 
-    public void heapSort() throws IOException {
+    public void heapSort() {
         int tl = filesize();
-        int posPai;
-        Registro F1 = new Registro();
-        Registro F2 = new Registro();
-        Registro maior = new Registro();
-        Registro pai = new Registro();
-        Registro inicio = new Registro(), fim = new Registro();
-
-        int posF1, posF2, posMaior;
-        int comparacao = 0;
-        int movimentacao = 0;
+        int posPai, posF1, posF2, posMaior;
+        Registro F1 = new Registro(), F2 = new Registro();
+        Registro maior = new Registro(), pai = new Registro();
+        Registro ini = new Registro(), fim = new Registro();
+        long comparacao = 0, movimentacao = 0;
 
         while (tl > 1) {
             for (posPai = tl / 2 - 1; posPai >= 0; posPai--) {
@@ -410,15 +400,15 @@ public class Arquivo {
 
                 seekArq(posF1);
                 F1.leDoArq(arquivo);
-                seekArq(posF2);
-                F2.leDoArq(arquivo);
 
-                comparacao++;
-                if (posF2 < tl && F1.getCodigo() < F2.getCodigo()) {
-                    posMaior = posF2;
-                    maior = F2;
-                    movimentacao++;
+                if (posF2 < tl) {
+                    seekArq(posF2);
+                    F2.leDoArq(arquivo);
+                    comparacao++;
+                    if (F2.getCodigo() > F1.getCodigo())
+                        posMaior = posF2;
                 }
+
                 seekArq(posMaior);
                 maior.leDoArq(arquivo);
                 seekArq(posPai);
@@ -430,95 +420,372 @@ public class Arquivo {
                     pai.gravaNoArq(arquivo);
                     seekArq(posPai);
                     maior.gravaNoArq(arquivo);
-                    movimentacao++;
+                    movimentacao += 2;
                 }
             }
             tl--;
             seekArq(0);
-            inicio.leDoArq(arquivo);
+            ini.leDoArq(arquivo);
             seekArq(tl);
             fim.leDoArq(arquivo);
             seekArq(0);
             fim.gravaNoArq(arquivo);
             seekArq(tl);
-            inicio.gravaNoArq(arquivo);
+            ini.gravaNoArq(arquivo);
         }
         this.movimentacao = movimentacao;
         this.comparacao = comparacao;
     }
 
-    public void shellSort() throws IOException {
-        int dist = 1;
-        int tl = filesize();
+    public void shellSort() {
+        int dist = 1, tl = filesize();
+        Registro regAtual = new Registro(), regAnterior = new Registro();
+        long comparacao = 0, movimentacao = 0;
+
         while (dist < tl)
             dist = dist * 3 + 1;
         dist = dist / 3;
+
         while (dist > 0) {
             for (int i = dist; i < tl; i++) {
                 seekArq(i);
-                Registro regAtual = new Registro();
                 regAtual.leDoArq(arquivo);
                 int j = i;
                 seekArq(j - dist);
-                Registro regAnterior = new Registro();
                 regAnterior.leDoArq(arquivo);
+                comparacao++;
                 while (j >= dist && regAnterior.getCodigo() > regAtual.getCodigo()) {
+                    movimentacao++;
                     seekArq(j);
                     regAnterior.gravaNoArq(arquivo);
                     j -= dist;
                     if (j >= dist) {
                         seekArq(j - dist);
                         regAnterior.leDoArq(arquivo);
+                        comparacao++;
                     }
                 }
+                movimentacao++;
                 seekArq(j);
                 regAtual.gravaNoArq(arquivo);
             }
             dist /= 3;
         }
+        this.comparacao = comparacao;
+        this.movimentacao = movimentacao;
     }
 
+    public void quickSort() {
+        this.comparacao = 0;
+        this.movimentacao = 0;
+        quickRec(0, filesize() - 1);
+    }
+
+    private void quickRec(int ini, int fim) {
+        int i = ini, j = fim;
+        Registro reg1 = new Registro(), reg2 = new Registro();
+
+        seekArq((ini + fim) / 2);
+        reg1.leDoArq(arquivo);
+        int pivo = reg1.getCodigo();
+
+        while (i < j) {
+            seekArq(i);
+            reg1.leDoArq(arquivo);
+            while (reg1.getCodigo() < pivo && i < fim) {
+                comparacao++;
+                i++;
+                seekArq(i);
+                reg1.leDoArq(arquivo);
+            }
+
+            seekArq(j);
+            reg2.leDoArq(arquivo);
+            while (reg2.getCodigo() > pivo && j > ini) {
+                comparacao++;
+                j--;
+                seekArq(j);
+                reg2.leDoArq(arquivo);
+            }
+
+            if (i <= j) {
+                seekArq(i);
+                reg2.gravaNoArq(arquivo);
+                seekArq(j);
+                reg1.gravaNoArq(arquivo);
+                i++;
+                j--;
+                movimentacao += 2;
+            }
+        }
+
+        if (ini < j) quickRec(ini, j);
+        if (i < fim) quickRec(i, fim);
+    }
+
+    public void mergeSort() {
+        this.comparacao = 0;
+        this.movimentacao = 0;
+        Arquivo aux = new Arquivo("auxMerge.dat");
+        aux.truncate(filesize());
+        mergeSortRec(aux, 0, filesize() - 1);
+    }
+
+    private void mergeSortRec(Arquivo aux, int esq, int dir) {
+        int meio;
+        if (esq < dir) {
+            meio = (esq + dir) / 2;
+            mergeSortRec(aux, esq, meio);
+            mergeSortRec(aux, meio + 1, dir);
+            fusao(aux, esq, meio, meio + 1, dir);
+        }
+    }
+
+    private void fusao(Arquivo aux, int ini1, int fim1, int ini2, int fim2) {
+        int i = ini1, j = ini2, k = 0;
+        Registro regI = new Registro(), regJ = new Registro();
+        aux.truncate(fim2 - ini1 + 1);
+        while (i <= fim1 && j <= fim2) {
+            seekArq(i);
+            regI.leDoArq(arquivo);
+            seekArq(j);
+            regJ.leDoArq(arquivo);
+            comparacao++;
+            if (regI.getCodigo() < regJ.getCodigo()) {
+                aux.seekArq(k++);
+                regI.gravaNoArq(aux.arquivo);
+                i++;
+            } else {
+                aux.seekArq(k++);
+                regJ.gravaNoArq(aux.arquivo);
+                j++;
+            }
+            movimentacao++;
+        }
+        while (i <= fim1) {
+            seekArq(i++);
+            regI.leDoArq(arquivo);
+            aux.seekArq(k++);
+            regI.gravaNoArq(aux.arquivo);
+            movimentacao++;
+        }
+        while (j <= fim2) {
+            seekArq(j++);
+            regJ.leDoArq(arquivo);
+            aux.seekArq(k++);
+            regJ.gravaNoArq(aux.arquivo);
+            movimentacao++;
+        }
+        for (i = 0; i < k; i++) {
+            aux.seekArq(i);
+            regJ.leDoArq(aux.arquivo);
+            seekArq(i + ini1);
+            regJ.gravaNoArq(arquivo);
+            movimentacao++;
+        }
+    }
+
+    public int maiorElem() {
+        Registro reg = new Registro();
+        int maior;
+        seekArq(0);
+        reg.leDoArq(arquivo);
+        maior = reg.getCodigo();
+        for (int i = 1; i < filesize(); i++) {
+            reg.leDoArq(arquivo);
+            if (reg.getCodigo() > maior)
+                maior = reg.getCodigo();
+        }
+        return maior;
+    }
+
+    public void countingSort() {
+        Arquivo arqAux = new Arquivo("auxCounting.dat");
+        Registro reg = new Registro();
+        int maior = maiorElem(), tl = filesize();
+        int[] vet = new int[maior + 1];
+
+        copiaArquivo(arqAux);
+
+        arqAux.seekArq(0);
+        for (int i = 0; i < tl; i++) {
+            reg.leDoArq(arqAux.arquivo);
+            vet[reg.getCodigo()]++;
+        }
+        for (int i = 0; i < maior; i++) {
+            vet[i + 1] = vet[i] + vet[i + 1];
+        }
+        arqAux.seekArq(0);
+        for (int i = 0; i < tl; i++) {
+            reg.leDoArq(arqAux.arquivo);
+            seekArq(vet[reg.getCodigo()] - 1);
+            vet[reg.getCodigo()]--;
+            reg.gravaNoArq(arquivo);
+            movimentacao++;
+        }
+    }
+
+    public void combSort() {
+        int tl = filesize(), inter = tl, i;
+        Registro reg = new Registro(), regAux = new Registro();
+        boolean flag = true;
+        long comparacao = 0, movimentacao = 0;
+
+        while (inter != 1 || flag) {
+            inter = (inter * 10) / 13;
+            if (inter < 1) inter = 1;
+            flag = false;
+
+            for (i = 0; i < tl - inter; i++) {
+                seekArq(i);
+                reg.leDoArq(arquivo);
+                seekArq(i + inter);
+                regAux.leDoArq(arquivo);
+                comparacao++;
+                if (reg.getCodigo() > regAux.getCodigo()) {
+                    seekArq(i + inter);
+                    reg.gravaNoArq(arquivo);
+                    seekArq(i);
+                    regAux.gravaNoArq(arquivo);
+                    movimentacao += 2;
+                    flag = true;
+                }
+            }
+        }
+        this.comparacao = comparacao;
+        this.movimentacao = movimentacao;
+    }
+
+    public void gnomeSort() {
+        int i = 0, tl = filesize();
+        Registro reg1 = new Registro(), reg2 = new Registro();
+        long comparacao = 0, movimentacao = 0;
+
+        while (i < tl) {
+            if (i == 0) {
+                i++;
+            } else {
+                seekArq(i);
+                reg1.leDoArq(arquivo);
+                seekArq(i - 1);
+                reg2.leDoArq(arquivo);
+                comparacao++;
+                if (reg1.getCodigo() >= reg2.getCodigo()) {
+                    i++;
+                } else {
+                    seekArq(i);
+                    reg2.gravaNoArq(arquivo);
+                    seekArq(i - 1);
+                    reg1.gravaNoArq(arquivo);
+                    movimentacao += 2;
+                    i--;
+                }
+            }
+        }
+        this.comparacao = comparacao;
+        this.movimentacao = movimentacao;
+    }
 
     public void carregaOrdenacao(int metodo,
                                  Arquivo arquivoOrdenado,
                                  Arquivo arquivoAleatorio,
-                                 Arquivo arquivoReverso) throws IOException {
-
+                                 Arquivo arquivoReverso) {
         arquivoOrdenado.geraOrdenado();
         arquivoAleatorio.geraRandom();
         arquivoReverso.geraReverso();
-        switch(metodo)
-        {
+
+        switch (metodo) {
             case 1:
+                arquivoOrdenado.zeraComp(); arquivoOrdenado.zeraMov();
+                arquivoAleatorio.zeraComp(); arquivoAleatorio.zeraMov();
+                arquivoReverso.zeraComp(); arquivoReverso.zeraMov();
                 arquivoOrdenado.insercaoDireta();
                 arquivoAleatorio.insercaoDireta();
                 arquivoReverso.insercaoDireta();
                 break;
             case 2:
+                arquivoOrdenado.zeraComp(); arquivoOrdenado.zeraMov();
+                arquivoAleatorio.zeraComp(); arquivoAleatorio.zeraMov();
+                arquivoReverso.zeraComp(); arquivoReverso.zeraMov();
                 arquivoOrdenado.insercaoBinaria();
                 arquivoAleatorio.insercaoBinaria();
                 arquivoReverso.insercaoBinaria();
                 break;
             case 3:
+                arquivoOrdenado.zeraComp(); arquivoOrdenado.zeraMov();
+                arquivoAleatorio.zeraComp(); arquivoAleatorio.zeraMov();
+                arquivoReverso.zeraComp(); arquivoReverso.zeraMov();
                 arquivoOrdenado.selecaoDireta();
                 arquivoAleatorio.selecaoDireta();
                 arquivoReverso.selecaoDireta();
                 break;
             case 4:
+                arquivoOrdenado.zeraComp(); arquivoOrdenado.zeraMov();
+                arquivoAleatorio.zeraComp(); arquivoAleatorio.zeraMov();
+                arquivoReverso.zeraComp(); arquivoReverso.zeraMov();
                 arquivoOrdenado.bolha();
                 arquivoAleatorio.bolha();
                 arquivoReverso.bolha();
                 break;
             case 5:
+                arquivoOrdenado.zeraComp(); arquivoOrdenado.zeraMov();
+                arquivoAleatorio.zeraComp(); arquivoAleatorio.zeraMov();
+                arquivoReverso.zeraComp(); arquivoReverso.zeraMov();
                 arquivoOrdenado.shake();
                 arquivoAleatorio.shake();
                 arquivoReverso.shake();
                 break;
             case 6:
+                arquivoOrdenado.zeraComp(); arquivoOrdenado.zeraMov();
+                arquivoAleatorio.zeraComp(); arquivoAleatorio.zeraMov();
+                arquivoReverso.zeraComp(); arquivoReverso.zeraMov();
+                arquivoOrdenado.heapSort();
+                arquivoAleatorio.heapSort();
+                arquivoReverso.heapSort();
+                break;
+            case 7:
+                arquivoOrdenado.zeraComp(); arquivoOrdenado.zeraMov();
+                arquivoAleatorio.zeraComp(); arquivoAleatorio.zeraMov();
+                arquivoReverso.zeraComp(); arquivoReverso.zeraMov();
+                arquivoOrdenado.shellSort();
+                arquivoAleatorio.shellSort();
+                arquivoReverso.shellSort();
+                break;
+            case 8:
+                arquivoOrdenado.quickSort();
+                arquivoAleatorio.quickSort();
+                arquivoReverso.quickSort();
+                break;
+            case 9:
+                arquivoOrdenado.mergeSort();
+                arquivoAleatorio.mergeSort();
+                arquivoReverso.mergeSort();
+                break;
+            case 10:
+                arquivoOrdenado.zeraComp(); arquivoOrdenado.zeraMov();
+                arquivoAleatorio.zeraComp(); arquivoAleatorio.zeraMov();
+                arquivoReverso.zeraComp(); arquivoReverso.zeraMov();
+                arquivoOrdenado.countingSort();
+                arquivoAleatorio.countingSort();
+                arquivoReverso.countingSort();
+                break;
+            case 11:
+                arquivoOrdenado.zeraComp(); arquivoOrdenado.zeraMov();
+                arquivoAleatorio.zeraComp(); arquivoAleatorio.zeraMov();
+                arquivoReverso.zeraComp(); arquivoReverso.zeraMov();
+                arquivoOrdenado.combSort();
+                arquivoAleatorio.combSort();
+                arquivoReverso.combSort();
+                break;
+            case 12:
+                arquivoOrdenado.zeraComp(); arquivoOrdenado.zeraMov();
+                arquivoAleatorio.zeraComp(); arquivoAleatorio.zeraMov();
+                arquivoReverso.zeraComp(); arquivoReverso.zeraMov();
+                arquivoOrdenado.gnomeSort();
+                arquivoAleatorio.gnomeSort();
+                arquivoReverso.gnomeSort();
                 break;
         }
-
-
     }
 
 }
