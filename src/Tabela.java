@@ -6,9 +6,9 @@ public class Tabela {
         FileWriter arq = new FileWriter("Tabela1.txt");
         PrintWriter gravarArq = new PrintWriter(arq);
         gravarArq.printf("__________________________________________________________________________________________________________________________________________________________________________________________________________________________%n");
-        gravarArq.printf("|Métodos Ordenação | \t\t\tArquivo Ordenado\t\t\t | \t\t\tArquivo em Ordem Reversa\t\t\t | \t\t\tArquivo Randômico\t\t\t |%n");
+        gravarArq.printf("|Metodos Ordenacao  | \t\t\tArquivo Ordenado\t\t\t | \t\t\tArquivo em Ordem Reversa\t\t\t | \t\t\tArquivo Randomico\t\t\t |%n");
         gravarArq.printf("_________________________________________________________________________________________________________________________________________________________________________________________________________________________|%n");
-        gravarArq.printf("\t\t | Comp. Prog. *| Comp. Equa. #| Mov. Prog. +| Mov. Equa. -| Tempo(ms)| Comp. Prog. *| Comp. Equa. #| Mov. Prog. +| Mov. Equa. -| Tempo(ms)| Comp. Prog. *| Comp. Equa. #| Mov. Prog. +| Mov. Equa. -| Tempo(ms)|%n");
+        gravarArq.printf("\t\t   | Comp.Prog.*  | Comp.Equa.#  | Mov.Prog.+  | Mov.Equa.-  | Tempo(ms)| Comp.Prog.*  | Comp.Equa.#  | Mov.Prog.+  | Mov.Equa.-  | Tempo(ms)| Comp.Prog.*  | Comp.Equa.#  | Mov.Prog.+  | Mov.Equa.-  | Tempo(ms)|%n");
         gravarArq.printf("_________________________________________________________________________________________________________________________________________________________________________________________________________________________|%n");
         gravarArq.flush();
         return arq;
@@ -21,7 +21,11 @@ public class Tabela {
                                   double movEquaOrd, double movEquaRev, double movEquaRand,
                                   long ttotalOrd, long ttotalRev, long ttotalRand) throws IOException {
         PrintWriter gravarArq = new PrintWriter(arq);
-        gravarArq.printf("" + metodo + "    |\t" + String.format("%-6.6s", compOrd) + "\t  |\t" + String.format("%-6.6s", compEquaOrd) + "\t |      " + String.format("%-6.6s", movOrd) + " |      " + String.format("%-2.6s", movEquaOrd) + " |\t" + String.format("%-2.6s", ttotalOrd) + "   |\t    " + String.format("%-6.6s", compRev) + "  |\t  " + String.format("%-6.6s", compEquaRev) + "   |\t " + String.format("%-6.6s", movRev) + "  | \t" + String.format("%-6.6s", movEquaRev) + " |  " + String.format("%-2.6s", ttotalRev) + "   |     " + String.format("%-6.6s", compRand) + "   |\t  " + String.format("%-6.6s", compEquaRand) + "     |\t    " + String.format("%-6.6s", movRand) + " |\t " + String.format("%-6.6s", movEquaRand) + "  |  " + String.format("%-4.6s", ttotalRand) + " |%n");
+        gravarArq.printf("%-19s|\t%-12s|\t%-12s|\t%-11s|\t%-11s|\t%-8s|\t%-12s|\t%-12s|\t%-11s|\t%-11s|\t%-8s|\t%-12s|\t%-12s|\t%-11s|\t%-11s|\t%-8s|%n",
+                metodo,
+                compOrd, String.format("%.1f", compEquaOrd), movOrd, String.format("%.1f", movEquaOrd), ttotalOrd,
+                compRev, String.format("%.1f", compEquaRev), movRev, String.format("%.1f", movEquaRev), ttotalRev,
+                compRand, String.format("%.1f", compEquaRand), movRand, String.format("%.1f", movEquaRand), ttotalRand);
         gravarArq.printf("_________________________________________________________________________________________________________________________________________________________________________________________________________________________|%n");
         gravarArq.flush();
     }
@@ -57,16 +61,16 @@ public class Tabela {
 
         // --- Insercao Direta ---
         System.out.println("Insercao Direta...");
-        arqOrd.copiaArquivo(auxOrd);   auxOrd.zeraComp();  auxOrd.zeraMov();
+        arqOrd.copiaArquivo(auxOrd);
         inicio = System.currentTimeMillis(); auxOrd.insercaoDireta();  fim = System.currentTimeMillis(); tOrd = fim - inicio;
 
-        arqRev.copiaArquivo(auxRev);   auxRev.zeraComp();  auxRev.zeraMov();
+        arqRev.copiaArquivo(auxRev);
         inicio = System.currentTimeMillis(); auxRev.insercaoDireta();  fim = System.currentTimeMillis(); tRev = fim - inicio;
 
-        arqRand.copiaArquivo(auxRand); auxRand.zeraComp(); auxRand.zeraMov();
+        arqRand.copiaArquivo(auxRand);
         inicio = System.currentTimeMillis(); auxRand.insercaoDireta(); fim = System.currentTimeMillis(); tRand = fim - inicio;
 
-        gravaLinhaTabela(arq, "Insercao Direta ",
+        gravaLinhaTabela(arq, "Insercao Direta",
                 auxOrd.getComparacao(),  auxRev.getComparacao(),  auxRand.getComparacao(),
                 auxOrd.getMovimentacao(),auxRev.getMovimentacao(),auxRand.getMovimentacao(),
                 (double)(n - 1),
@@ -79,20 +83,20 @@ public class Tabela {
 
         // --- Insercao Binaria ---
         System.out.println("Insercao Binaria...");
-        arqOrd.copiaArquivo(auxOrd);   auxOrd.zeraComp();  auxOrd.zeraMov();
+        arqOrd.copiaArquivo(auxOrd);
         inicio = System.currentTimeMillis(); auxOrd.insercaoBinaria();  fim = System.currentTimeMillis(); tOrd = fim - inicio;
 
-        arqRev.copiaArquivo(auxRev);   auxRev.zeraComp();  auxRev.zeraMov();
+        arqRev.copiaArquivo(auxRev);
         inicio = System.currentTimeMillis(); auxRev.insercaoBinaria();  fim = System.currentTimeMillis(); tRev = fim - inicio;
 
-        arqRand.copiaArquivo(auxRand); auxRand.zeraComp(); auxRand.zeraMov();
+        arqRand.copiaArquivo(auxRand);
         inicio = System.currentTimeMillis(); auxRand.insercaoBinaria(); fim = System.currentTimeMillis(); tRand = fim - inicio;
 
-        double logN = Math.log10(n) - Math.log(Math.E) + 0.5;
+        double logN = n * (Math.log10(n) - Math.log(Math.E) + 0.5);
         gravaLinhaTabela(arq, "Insercao Binaria",
                 auxOrd.getComparacao(),  auxRev.getComparacao(),  auxRand.getComparacao(),
                 auxOrd.getMovimentacao(),auxRev.getMovimentacao(),auxRand.getMovimentacao(),
-                n * logN, n * logN, n * logN,
+                logN, logN, logN,
                 3.0 * (n - 1),
                 (double)(n * n + 3 * n - 4) / 2,
                 (double)(n * n + 9 * n - 10) / 4,
@@ -100,21 +104,20 @@ public class Tabela {
 
         // --- Selecao Direta ---
         System.out.println("Selecao Direta...");
-        arqOrd.copiaArquivo(auxOrd);   auxOrd.zeraComp();  auxOrd.zeraMov();
+        arqOrd.copiaArquivo(auxOrd);
         inicio = System.currentTimeMillis(); auxOrd.selecaoDireta();  fim = System.currentTimeMillis(); tOrd = fim - inicio;
 
-        arqRev.copiaArquivo(auxRev);   auxRev.zeraComp();  auxRev.zeraMov();
+        arqRev.copiaArquivo(auxRev);
         inicio = System.currentTimeMillis(); auxRev.selecaoDireta();  fim = System.currentTimeMillis(); tRev = fim - inicio;
 
-        arqRand.copiaArquivo(auxRand); auxRand.zeraComp(); auxRand.zeraMov();
+        arqRand.copiaArquivo(auxRand);
         inicio = System.currentTimeMillis(); auxRand.selecaoDireta(); fim = System.currentTimeMillis(); tRand = fim - inicio;
 
-        gravaLinhaTabela(arq, "Selecao Direta  ",
+        double selComp = (double)(n * n - n) / 2;
+        gravaLinhaTabela(arq, "Selecao Direta",
                 auxOrd.getComparacao(),  auxRev.getComparacao(),  auxRand.getComparacao(),
                 auxOrd.getMovimentacao(),auxRev.getMovimentacao(),auxRand.getMovimentacao(),
-                (double)(n * n - n) / 2,
-                (double)(n * n - n) / 2,
-                (double)(n * n - n) / 2,
+                selComp, selComp, selComp,
                 3.0 * (n - 1),
                 (double)(n * n + 3 * n - 4) / 2,
                 n * (Math.log10(n) + 0.577216),
@@ -122,53 +125,38 @@ public class Tabela {
 
         // --- Bolha ---
         System.out.println("Bolha...");
-        arqOrd.copiaArquivo(auxOrd);   auxOrd.zeraComp();  auxOrd.zeraMov();
+        arqOrd.copiaArquivo(auxOrd);
         inicio = System.currentTimeMillis(); auxOrd.bolha();  fim = System.currentTimeMillis(); tOrd = fim - inicio;
 
-        arqRev.copiaArquivo(auxRev);   auxRev.zeraComp();  auxRev.zeraMov();
+        arqRev.copiaArquivo(auxRev);
         inicio = System.currentTimeMillis(); auxRev.bolha();  fim = System.currentTimeMillis(); tRev = fim - inicio;
 
-        arqRand.copiaArquivo(auxRand); auxRand.zeraComp(); auxRand.zeraMov();
+        arqRand.copiaArquivo(auxRand);
         inicio = System.currentTimeMillis(); auxRand.bolha(); fim = System.currentTimeMillis(); tRand = fim - inicio;
 
-        gravaLinhaTabela(arq, "Bolha           ",
+        gravaLinhaTabela(arq, "Bolha",
                 auxOrd.getComparacao(),  auxRev.getComparacao(),  auxRand.getComparacao(),
                 auxOrd.getMovimentacao(),auxRev.getMovimentacao(),auxRand.getMovimentacao(),
                 (double)(n - 1),
                 (double)(n * n - n) / 2,
                 (double)(n * n - n) / 4,
-                0, (double) 3 * n * (n - 1) / 2, (double) 3 * n * (n - 1) / 4,
+                0,
+                (double) 3 * n * (n - 1) / 2,
+                (double) 3 * n * (n - 1) / 4,
                 tOrd, tRev, tRand);
 
         // --- Shake ---
         System.out.println("Shake...");
-        arqOrd.copiaArquivo(auxOrd);   auxOrd.zeraComp();  auxOrd.zeraMov();
+        arqOrd.copiaArquivo(auxOrd);
         inicio = System.currentTimeMillis(); auxOrd.shake();  fim = System.currentTimeMillis(); tOrd = fim - inicio;
 
-        arqRev.copiaArquivo(auxRev);   auxRev.zeraComp();  auxRev.zeraMov();
+        arqRev.copiaArquivo(auxRev);
         inicio = System.currentTimeMillis(); auxRev.shake();  fim = System.currentTimeMillis(); tRev = fim - inicio;
 
-        arqRand.copiaArquivo(auxRand); auxRand.zeraComp(); auxRand.zeraMov();
+        arqRand.copiaArquivo(auxRand);
         inicio = System.currentTimeMillis(); auxRand.shake(); fim = System.currentTimeMillis(); tRand = fim - inicio;
 
-        gravaLinhaTabela(arq, "Shake           ",
-                auxOrd.getComparacao(),  auxRev.getComparacao(),  auxRand.getComparacao(),
-                auxOrd.getMovimentacao(),auxRev.getMovimentacao(),auxRand.getMovimentacao(),
-                0, 0, 0, 0, 0, 0,
-                tOrd, tRev, tRand);
-
-        // --- Heap Sort ---
-        System.out.println("Heap Sort...");
-        arqOrd.copiaArquivo(auxOrd);   auxOrd.zeraComp();  auxOrd.zeraMov();
-        inicio = System.currentTimeMillis(); auxOrd.heapSort();  fim = System.currentTimeMillis(); tOrd = fim - inicio;
-
-        arqRev.copiaArquivo(auxRev);   auxRev.zeraComp();  auxRev.zeraMov();
-        inicio = System.currentTimeMillis(); auxRev.heapSort();  fim = System.currentTimeMillis(); tRev = fim - inicio;
-
-        arqRand.copiaArquivo(auxRand); auxRand.zeraComp(); auxRand.zeraMov();
-        inicio = System.currentTimeMillis(); auxRand.heapSort(); fim = System.currentTimeMillis(); tRand = fim - inicio;
-
-        gravaLinhaTabela(arq, "Heap Sort       ",
+        gravaLinhaTabela(arq, "Shake",
                 auxOrd.getComparacao(),  auxRev.getComparacao(),  auxRand.getComparacao(),
                 auxOrd.getMovimentacao(),auxRev.getMovimentacao(),auxRand.getMovimentacao(),
                 0, 0, 0, 0, 0, 0,
@@ -176,40 +164,74 @@ public class Tabela {
 
         // --- Shell Sort ---
         System.out.println("Shell Sort...");
-        arqOrd.copiaArquivo(auxOrd);   auxOrd.zeraComp();  auxOrd.zeraMov();
+        arqOrd.copiaArquivo(auxOrd);
         inicio = System.currentTimeMillis(); auxOrd.shellSort();  fim = System.currentTimeMillis(); tOrd = fim - inicio;
 
-        arqRev.copiaArquivo(auxRev);   auxRev.zeraComp();  auxRev.zeraMov();
+        arqRev.copiaArquivo(auxRev);
         inicio = System.currentTimeMillis(); auxRev.shellSort();  fim = System.currentTimeMillis(); tRev = fim - inicio;
 
-        arqRand.copiaArquivo(auxRand); auxRand.zeraComp(); auxRand.zeraMov();
+        arqRand.copiaArquivo(auxRand);
         inicio = System.currentTimeMillis(); auxRand.shellSort(); fim = System.currentTimeMillis(); tRand = fim - inicio;
 
-        gravaLinhaTabela(arq, "Shell Sort      ",
+        gravaLinhaTabela(arq, "Shell Sort",
                 auxOrd.getComparacao(),  auxRev.getComparacao(),  auxRand.getComparacao(),
                 auxOrd.getMovimentacao(),auxRev.getMovimentacao(),auxRand.getMovimentacao(),
                 0, 0, 0, 0, 0, 0,
                 tOrd, tRev, tRand);
 
-        // --- Quick Sort ---
-        System.out.println("Quick Sort...");
+        // --- Heap Sort ---
+        System.out.println("Heap Sort...");
         arqOrd.copiaArquivo(auxOrd);
-        inicio = System.currentTimeMillis(); auxOrd.quickSort();  fim = System.currentTimeMillis(); tOrd = fim - inicio;
+        inicio = System.currentTimeMillis(); auxOrd.heapSort();  fim = System.currentTimeMillis(); tOrd = fim - inicio;
 
         arqRev.copiaArquivo(auxRev);
-        inicio = System.currentTimeMillis(); auxRev.quickSort();  fim = System.currentTimeMillis(); tRev = fim - inicio;
+        inicio = System.currentTimeMillis(); auxRev.heapSort();  fim = System.currentTimeMillis(); tRev = fim - inicio;
 
         arqRand.copiaArquivo(auxRand);
-        inicio = System.currentTimeMillis(); auxRand.quickSort(); fim = System.currentTimeMillis(); tRand = fim - inicio;
+        inicio = System.currentTimeMillis(); auxRand.heapSort(); fim = System.currentTimeMillis(); tRand = fim - inicio;
 
-        gravaLinhaTabela(arq, "Quick Sort      ",
+        gravaLinhaTabela(arq, "Heap Sort",
                 auxOrd.getComparacao(),  auxRev.getComparacao(),  auxRand.getComparacao(),
                 auxOrd.getMovimentacao(),auxRev.getMovimentacao(),auxRand.getMovimentacao(),
                 0, 0, 0, 0, 0, 0,
                 tOrd, tRev, tRand);
 
-        // --- Merge Sort ---
-        System.out.println("Merge Sort...");
+        // --- Quick c/ Pivo ---
+        System.out.println("Quick Sort c/ Pivo...");
+        arqOrd.copiaArquivo(auxOrd);
+        inicio = System.currentTimeMillis(); auxOrd.quickSortComPivo();  fim = System.currentTimeMillis(); tOrd = fim - inicio;
+
+        arqRev.copiaArquivo(auxRev);
+        inicio = System.currentTimeMillis(); auxRev.quickSortComPivo();  fim = System.currentTimeMillis(); tRev = fim - inicio;
+
+        arqRand.copiaArquivo(auxRand);
+        inicio = System.currentTimeMillis(); auxRand.quickSortComPivo(); fim = System.currentTimeMillis(); tRand = fim - inicio;
+
+        gravaLinhaTabela(arq, "Quick c/ Pivo",
+                auxOrd.getComparacao(),  auxRev.getComparacao(),  auxRand.getComparacao(),
+                auxOrd.getMovimentacao(),auxRev.getMovimentacao(),auxRand.getMovimentacao(),
+                0, 0, 0, 0, 0, 0,
+                tOrd, tRev, tRand);
+
+        // --- Quick s/ Pivo ---
+        System.out.println("Quick Sort s/ Pivo...");
+        arqOrd.copiaArquivo(auxOrd);
+        inicio = System.currentTimeMillis(); auxOrd.quickSortSemPivo();  fim = System.currentTimeMillis(); tOrd = fim - inicio;
+
+        arqRev.copiaArquivo(auxRev);
+        inicio = System.currentTimeMillis(); auxRev.quickSortSemPivo();  fim = System.currentTimeMillis(); tRev = fim - inicio;
+
+        arqRand.copiaArquivo(auxRand);
+        inicio = System.currentTimeMillis(); auxRand.quickSortSemPivo(); fim = System.currentTimeMillis(); tRand = fim - inicio;
+
+        gravaLinhaTabela(arq, "Quick s/ Pivo",
+                auxOrd.getComparacao(),  auxRev.getComparacao(),  auxRand.getComparacao(),
+                auxOrd.getMovimentacao(),auxRev.getMovimentacao(),auxRand.getMovimentacao(),
+                0, 0, 0, 0, 0, 0,
+                tOrd, tRev, tRand);
+
+        // --- Merge Sort 1a Impl ---
+        System.out.println("Merge Sort 1a Impl...");
         arqOrd.copiaArquivo(auxOrd);
         inicio = System.currentTimeMillis(); auxOrd.mergeSort();  fim = System.currentTimeMillis(); tOrd = fim - inicio;
 
@@ -219,7 +241,24 @@ public class Tabela {
         arqRand.copiaArquivo(auxRand);
         inicio = System.currentTimeMillis(); auxRand.mergeSort(); fim = System.currentTimeMillis(); tRand = fim - inicio;
 
-        gravaLinhaTabela(arq, "Merge Sort      ",
+        gravaLinhaTabela(arq, "Merge 1a Impl",
+                auxOrd.getComparacao(),  auxRev.getComparacao(),  auxRand.getComparacao(),
+                auxOrd.getMovimentacao(),auxRev.getMovimentacao(),auxRand.getMovimentacao(),
+                0, 0, 0, 0, 0, 0,
+                tOrd, tRev, tRand);
+
+        // --- Merge Sort 2a Impl ---
+        System.out.println("Merge Sort 2a Impl...");
+        arqOrd.copiaArquivo(auxOrd);
+        inicio = System.currentTimeMillis(); auxOrd.mergeSort2();  fim = System.currentTimeMillis(); tOrd = fim - inicio;
+
+        arqRev.copiaArquivo(auxRev);
+        inicio = System.currentTimeMillis(); auxRev.mergeSort2();  fim = System.currentTimeMillis(); tRev = fim - inicio;
+
+        arqRand.copiaArquivo(auxRand);
+        inicio = System.currentTimeMillis(); auxRand.mergeSort2(); fim = System.currentTimeMillis(); tRand = fim - inicio;
+
+        gravaLinhaTabela(arq, "Merge 2a Impl",
                 auxOrd.getComparacao(),  auxRev.getComparacao(),  auxRand.getComparacao(),
                 auxOrd.getMovimentacao(),auxRev.getMovimentacao(),auxRand.getMovimentacao(),
                 0, 0, 0, 0, 0, 0,
@@ -236,7 +275,41 @@ public class Tabela {
         arqRand.copiaArquivo(auxRand); auxRand.zeraComp(); auxRand.zeraMov();
         inicio = System.currentTimeMillis(); auxRand.countingSort(); fim = System.currentTimeMillis(); tRand = fim - inicio;
 
-        gravaLinhaTabela(arq, "Counting Sort   ",
+        gravaLinhaTabela(arq, "Counting Sort",
+                auxOrd.getComparacao(),  auxRev.getComparacao(),  auxRand.getComparacao(),
+                auxOrd.getMovimentacao(),auxRev.getMovimentacao(),auxRand.getMovimentacao(),
+                0, 0, 0, 0, 0, 0,
+                tOrd, tRev, tRand);
+
+        // --- Bucket Sort ---
+        System.out.println("Bucket Sort...");
+        arqOrd.copiaArquivo(auxOrd);   auxOrd.zeraComp();  auxOrd.zeraMov();
+        inicio = System.currentTimeMillis(); auxOrd.bucketSort();  fim = System.currentTimeMillis(); tOrd = fim - inicio;
+
+        arqRev.copiaArquivo(auxRev);   auxRev.zeraComp();  auxRev.zeraMov();
+        inicio = System.currentTimeMillis(); auxRev.bucketSort();  fim = System.currentTimeMillis(); tRev = fim - inicio;
+
+        arqRand.copiaArquivo(auxRand); auxRand.zeraComp(); auxRand.zeraMov();
+        inicio = System.currentTimeMillis(); auxRand.bucketSort(); fim = System.currentTimeMillis(); tRand = fim - inicio;
+
+        gravaLinhaTabela(arq, "Bucket Sort",
+                auxOrd.getComparacao(),  auxRev.getComparacao(),  auxRand.getComparacao(),
+                auxOrd.getMovimentacao(),auxRev.getMovimentacao(),auxRand.getMovimentacao(),
+                0, 0, 0, 0, 0, 0,
+                tOrd, tRev, tRand);
+
+        // --- Radix Sort ---
+        System.out.println("Radix Sort...");
+        arqOrd.copiaArquivo(auxOrd);
+        inicio = System.currentTimeMillis(); auxOrd.radixSort();  fim = System.currentTimeMillis(); tOrd = fim - inicio;
+
+        arqRev.copiaArquivo(auxRev);
+        inicio = System.currentTimeMillis(); auxRev.radixSort();  fim = System.currentTimeMillis(); tRev = fim - inicio;
+
+        arqRand.copiaArquivo(auxRand);
+        inicio = System.currentTimeMillis(); auxRand.radixSort(); fim = System.currentTimeMillis(); tRand = fim - inicio;
+
+        gravaLinhaTabela(arq, "Radix Sort",
                 auxOrd.getComparacao(),  auxRev.getComparacao(),  auxRand.getComparacao(),
                 auxOrd.getMovimentacao(),auxRev.getMovimentacao(),auxRand.getMovimentacao(),
                 0, 0, 0, 0, 0, 0,
@@ -244,16 +317,16 @@ public class Tabela {
 
         // --- Comb Sort ---
         System.out.println("Comb Sort...");
-        arqOrd.copiaArquivo(auxOrd);   auxOrd.zeraComp();  auxOrd.zeraMov();
+        arqOrd.copiaArquivo(auxOrd);
         inicio = System.currentTimeMillis(); auxOrd.combSort();  fim = System.currentTimeMillis(); tOrd = fim - inicio;
 
-        arqRev.copiaArquivo(auxRev);   auxRev.zeraComp();  auxRev.zeraMov();
+        arqRev.copiaArquivo(auxRev);
         inicio = System.currentTimeMillis(); auxRev.combSort();  fim = System.currentTimeMillis(); tRev = fim - inicio;
 
-        arqRand.copiaArquivo(auxRand); auxRand.zeraComp(); auxRand.zeraMov();
+        arqRand.copiaArquivo(auxRand);
         inicio = System.currentTimeMillis(); auxRand.combSort(); fim = System.currentTimeMillis(); tRand = fim - inicio;
 
-        gravaLinhaTabela(arq, "Comb Sort       ",
+        gravaLinhaTabela(arq, "Comb Sort",
                 auxOrd.getComparacao(),  auxRev.getComparacao(),  auxRand.getComparacao(),
                 auxOrd.getMovimentacao(),auxRev.getMovimentacao(),auxRand.getMovimentacao(),
                 0, 0, 0, 0, 0, 0,
@@ -261,16 +334,33 @@ public class Tabela {
 
         // --- Gnome Sort ---
         System.out.println("Gnome Sort...");
-        arqOrd.copiaArquivo(auxOrd);   auxOrd.zeraComp();  auxOrd.zeraMov();
+        arqOrd.copiaArquivo(auxOrd);
         inicio = System.currentTimeMillis(); auxOrd.gnomeSort();  fim = System.currentTimeMillis(); tOrd = fim - inicio;
 
-        arqRev.copiaArquivo(auxRev);   auxRev.zeraComp();  auxRev.zeraMov();
+        arqRev.copiaArquivo(auxRev);
         inicio = System.currentTimeMillis(); auxRev.gnomeSort();  fim = System.currentTimeMillis(); tRev = fim - inicio;
 
-        arqRand.copiaArquivo(auxRand); auxRand.zeraComp(); auxRand.zeraMov();
+        arqRand.copiaArquivo(auxRand);
         inicio = System.currentTimeMillis(); auxRand.gnomeSort(); fim = System.currentTimeMillis(); tRand = fim - inicio;
 
-        gravaLinhaTabela(arq, "Gnome Sort      ",
+        gravaLinhaTabela(arq, "Gnome Sort",
+                auxOrd.getComparacao(),  auxRev.getComparacao(),  auxRand.getComparacao(),
+                auxOrd.getMovimentacao(),auxRev.getMovimentacao(),auxRand.getMovimentacao(),
+                0, 0, 0, 0, 0, 0,
+                tOrd, tRev, tRand);
+
+        // --- Tim Sort ---
+        System.out.println("Tim Sort...");
+        arqOrd.copiaArquivo(auxOrd);
+        inicio = System.currentTimeMillis(); auxOrd.timSort();  fim = System.currentTimeMillis(); tOrd = fim - inicio;
+
+        arqRev.copiaArquivo(auxRev);
+        inicio = System.currentTimeMillis(); auxRev.timSort();  fim = System.currentTimeMillis(); tRev = fim - inicio;
+
+        arqRand.copiaArquivo(auxRand);
+        inicio = System.currentTimeMillis(); auxRand.timSort(); fim = System.currentTimeMillis(); tRand = fim - inicio;
+
+        gravaLinhaTabela(arq, "Tim Sort",
                 auxOrd.getComparacao(),  auxRev.getComparacao(),  auxRand.getComparacao(),
                 auxOrd.getMovimentacao(),auxRev.getMovimentacao(),auxRand.getMovimentacao(),
                 0, 0, 0, 0, 0, 0,

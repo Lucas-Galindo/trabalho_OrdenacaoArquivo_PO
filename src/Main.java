@@ -17,9 +17,9 @@ public class Main {
 
         while (opcaoRunning != 0) {
             System.out.println("PAINEL - ORDENACAO EM ARQUIVO");
-            System.out.println("|1| Executar todos e gerar tabela");
-            System.out.println("|2| Testar ordenacao individual");
-            System.out.println("|0| Sair");
+            System.out.println("|1|  Executar todos e gerar tabela");
+            System.out.println("|2|  Testar ordenacao individual");
+            System.out.println("|0|  Sair");
 
             opcao = input.nextInt();
             opcaoRunning = opcao;
@@ -34,13 +34,18 @@ public class Main {
                 System.out.println("|3|  Selecao Direta");
                 System.out.println("|4|  Bolha");
                 System.out.println("|5|  Shake");
-                System.out.println("|6|  Heap Sort");
-                System.out.println("|7|  Shell Sort");
-                System.out.println("|8|  Quick Sort");
-                System.out.println("|9|  Merge Sort");
-                System.out.println("|10| Counting Sort");
-                System.out.println("|11| Comb Sort");
-                System.out.println("|12| Gnome Sort");
+                System.out.println("|6|  Shell Sort");
+                System.out.println("|7|  Heap Sort");
+                System.out.println("|8|  Quick c/ Pivo");
+                System.out.println("|9|  Quick s/ Pivo");
+                System.out.println("|10| Merge Sort 1a Impl");
+                System.out.println("|11| Merge Sort 2a Impl");
+                System.out.println("|12| Counting Sort");
+                System.out.println("|13| Bucket Sort");
+                System.out.println("|14| Radix Sort");
+                System.out.println("|15| Comb Sort");
+                System.out.println("|16| Gnome Sort");
+                System.out.println("|17| Tim Sort");
 
                 opcao = input.nextInt();
                 chamaOrdenacao(opcao);
